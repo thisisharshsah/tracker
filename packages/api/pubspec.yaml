@@ -1,0 +1,19 @@
+name: api
+description: A repository for handling api in Flutter applications
+version: 1.0.0
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: '>=3.2.4 <4.0.0'
+
+dependencies:
+  cache:
+    path: ../cache
+
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

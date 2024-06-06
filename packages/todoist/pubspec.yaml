@@ -1,0 +1,21 @@
+name: todoist
+description: A repository for handling todoist in Flutter applications
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.4.1 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cache:
+    path: ../cache
+  api:
+    path: ../api
+  http: ^1.2.0
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
