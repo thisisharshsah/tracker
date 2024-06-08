@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:todoist/todoist.dart';
+
+import '../../../global/global.dart';
+import '../home.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -14,7 +19,6 @@ class HomeView extends StatelessWidget {
             children: <Widget>[
               const WishUser(),
               10.verticalSpace,
-              // list of row of todo, in progress, done
               const HorizontalProgressItem(),
             ],
           ),
@@ -29,8 +33,10 @@ class HorizontalProgressItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300.sp,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: 300.sp,
+      ),
       child: ListView(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
@@ -39,17 +45,14 @@ class HorizontalProgressItem extends StatelessWidget {
         children: <Widget>[
           const ProgressItem(
             title: 'To Do',
-            count: 5,
           ),
           5.horizontalSpace,
           const ProgressItem(
             title: 'In Progress',
-            count: 3,
           ),
           5.horizontalSpace,
           const ProgressItem(
             title: 'Completed',
-            count: 2,
           ),
         ],
       ),
@@ -59,89 +62,122 @@ class HorizontalProgressItem extends StatelessWidget {
 
 class ProgressItem extends StatelessWidget {
   final String title;
-  final int count;
 
   const ProgressItem({
     super.key,
     required this.title,
-    required this.count,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 200.sp,
-      height: 300.sp,
-      child: Card(
-        color: Theme.of(context).primaryColor,
-        elevation: 0,
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.sp),
-          side: BorderSide(
-            color: Theme.of(context).hintColor,
-            width: 1.sp,
+    return DragTarget<Task>(
+      builder: (context, candidateData, rejectedData) {
+        return _buildProgressItem(context);
+      },
+      onWillAccept: (data) {
+        return true;
+      },
+      onAccept: (data) {
+        print('$title accepted');
+      },
+    );
+  }
+
+  Widget _buildProgressItem(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: 150.sp,
+            maxWidth: 250.sp,
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Container(
-                padding: EdgeInsets.all(10.sp),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).secondaryHeaderColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8.sp),
-                    topRight: Radius.circular(8.sp),
-                  ),
-                ),
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
+          child: Card(
+            color: Theme.of(context).primaryColor,
+            elevation: 0,
+            margin: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.sp),
+              side: BorderSide(
+                color: Theme.of(context).hintColor,
+                width: 1.sp,
               ),
             ),
-            10.verticalSpace,
-            Expanded(
-              flex: 5,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: count,
-                padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 5.sp),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10.sp),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.sp),
-                        side: BorderSide(
-                          color: Theme.of(context).primaryColor,
-                          width: 1.sp,
-                        ),
-                      ),
-                      tileColor: Theme.of(context).hintColor,
-                      textColor: Theme.of(context).textTheme.labelMedium!.color,
-                      trailing: Icon(
-                        Icons.check_circle,
-                        color: Theme.of(context).textTheme.labelMedium!.color,
-                      ),
-                      title: Text(
-                        'Task ${index + 1}',
-                        style: Theme.of(context).textTheme.labelMedium,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: 50.sp,
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(10.sp),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.1),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8.sp),
+                        topRight: Radius.circular(8.sp),
                       ),
                     ),
-                  );
-                },
-              ),
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                  ),
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 250.sp,
+                    maxWidth: 250.sp,
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: title == 'To Do'
+                        ? state.tasks.where((element) {
+                            return element.duration == TaskDuration.empty;
+                          }).length
+                        : title == 'In Progress'
+                            ? state.tasks.where((element) {
+                                return element.duration != TaskDuration.empty;
+                              }).length
+                            : title == 'Completed'
+                                ? state.tasks.where((element) {
+                                    return element.isCompleted;
+                                  }).length
+                                : 0,
+                    padding: EdgeInsets.zero,
+                    itemBuilder: (context, index) {
+                      return ProgressTaskCard(
+                        task: title == 'To Do'
+                            ? state.tasks.where((element) {
+                                return element.duration == TaskDuration.empty;
+                              }).elementAt(index)
+                            : title == 'In Progress'
+                                ? state.tasks.where((element) {
+                                    return element.duration !=
+                                        TaskDuration.empty;
+                                  }).elementAt(index)
+                                : title == 'Completed'
+                                    ? state.tasks.where((element) {
+                                        return element.isCompleted;
+                                      }).elementAt(index)
+                                    : Task.empty,
+                        onPressed: () {},
+                        onCheckBoxChanged: (value) {},
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

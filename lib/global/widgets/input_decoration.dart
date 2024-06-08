@@ -8,6 +8,7 @@ class CustomTextFormField extends StatelessWidget {
   final String hint;
   final IconData icon;
   final TextEditingController? controller;
+  final String? initialValue;
   final void Function(String?)? onChanged;
   final void Function()? onTap;
   final Widget? suffixIcon;
@@ -20,6 +21,7 @@ class CustomTextFormField extends StatelessWidget {
     required this.label,
     required this.hint,
     required this.icon,
+    this.initialValue,
     this.controller,
     required this.onChanged,
     this.onTap,
@@ -37,6 +39,7 @@ class CustomTextFormField extends StatelessWidget {
       onTap: onTap,
       showCursor: onTap == null,
       controller: controller,
+      initialValue: initialValue,
       obscureText: obscureText,
       maxLines: maxLines,
       decoration: InputDecoration(

@@ -73,33 +73,44 @@ class Todoist {
     return TaskResponse.fromJson(jsonDecode(response.body));
   }
 
-  Future<TaskResponse> getTask({required String id}) async {
+  Future<TaskResponse> getTaskByProjectID({required String projectId}) async {
     final token = await _cache.readToken();
-    final response = await _api.getWithAuth('/tasks?project_id=$id', token!);
+    final response = await _api.getWithAuth(
+      '/tasks?project_id=$projectId',
+      token!,
+    );
     return TaskResponse.fromJson(jsonDecode(response.body));
   }
 
-  Future<void> createTask({
+  Future<SingleTaskResponse> getTask({required String id}) async {
+    final token = await _cache.readToken();
+    final response = await _api.getWithAuth('/tasks/$id', token!);
+    return SingleTaskResponse.fromJson(jsonDecode(response.body));
+  }
+
+  Future createTask({
     required String content,
     required String projectId,
+    required String priority,
     String? description,
-    int? priority,
     String? dueDate,
     String? dueString,
   }) async {
     final token = await _cache.readToken();
-    await _api
+    return await _api
         .postWithAuth('/tasks?project_id=$projectId',
             body: {
               'content': content,
+              'priority': priority,
               if (description != null) 'description': description,
-              if (priority != null) 'priority': priority,
               if (dueDate != null) 'due_date': dueDate,
               if (dueString != null) 'due_string': dueString,
             },
             token: token!)
         .then((response) {
-      return response;
+      print(response.body);
+    }).catchError((error) {
+      print(error);
     });
   }
 
@@ -107,19 +118,9 @@ class Todoist {
     required String id,
     String? content,
     String? description,
-    bool? isCompleted,
-    List<String>? labels,
-    String? parentId,
-    int? order,
-    int? priority,
     String? dueDate,
     String? dueString,
-    String? url,
-    int? commentCount,
-    String? createdAt,
-    String? creatorId,
-    String? assigneeId,
-    String? assignerId,
+    String? priority,
     String? duration,
   }) async {
     final token = await _cache.readToken();
@@ -128,31 +129,23 @@ class Todoist {
             body: {
               if (content != null) 'content': content,
               if (description != null) 'description': description,
-              if (isCompleted != null) 'is_completed': isCompleted,
-              if (labels != null) 'labels': labels,
-              if (parentId != null) 'parent_id': parentId,
-              if (order != null) 'order': order,
-              if (priority != null) 'priority': priority,
               if (dueDate != null) 'due_date': dueDate,
               if (dueString != null) 'due_string': dueString,
-              if (commentCount != null) 'comment_count': commentCount,
-              if (createdAt != null) 'created_at': createdAt,
-              if (creatorId != null) 'creator_id': creatorId,
-              if (assigneeId != null) 'assignee_id': assigneeId,
-              if (assignerId != null) 'assigner_id': assignerId,
+              if (priority != null) 'priority': priority,
               if (duration != null) 'duration': duration,
+              if (duration != null) 'duration_unit': 'minute',
             },
             token: token!)
         .then((response) {
+      print(response.body);
       return response;
     });
   }
 
-  Future<void> closeTask({required int id}) async {
+  Future<bool> closeTask({required String id}) async {
     final token = await _cache.readToken();
-    await _api.postWithAuth('/tasks/$id/close', token: token!).then((response) {
-      return response;
-    });
+    final response = await _api.postWithAuth('/tasks/$id/close', token: token!);
+    return response.statusCode == 204;
   }
 
   Future<void> reopenTask({required int id}) async {

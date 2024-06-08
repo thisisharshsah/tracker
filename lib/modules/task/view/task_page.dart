@@ -24,7 +24,8 @@ class TaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TaskBloc(Todoist())..add(TaskInitial(project)),
+      create: (context) => TaskBloc(todoist: Todoist(), project: project)
+        ..add(const TaskInitial()),
       child: TaskView(project: project),
     );
   }

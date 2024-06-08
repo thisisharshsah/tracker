@@ -19,3 +19,16 @@ class ProjectSelected extends ProjectEvent {
   @override
   List<Object> get props => [project];
 }
+
+class ProjectNameChanged extends ProjectEvent {
+  const ProjectNameChanged(this.name);
+
+  final String name;
+
+  @override
+  List<Object> get props => [name];
+}
+
+class ProjectCreated extends ProjectEvent {
+  const ProjectCreated();
+}

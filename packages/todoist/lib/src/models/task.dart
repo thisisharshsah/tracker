@@ -38,7 +38,7 @@ class Task extends Equatable {
   final String? assigneeId;
   final DateTime createdAt;
   final String description;
-  final Duration? duration;
+  final TaskDuration? duration;
   final String? parentId;
 
   List<Object> get props => [
@@ -79,7 +79,7 @@ class Task extends Equatable {
         assigneeId: json['assignee_id'] ?? '',
         createdAt: DateTime.parse(json['created_at']),
         description: json['description'],
-        duration: Duration.fromJson(json['duration'] ?? {}),
+        duration: TaskDuration.fromJson(json['duration'] ?? {}),
         parentId: json['parent_id'] ?? '',
       );
 
@@ -121,7 +121,7 @@ class Task extends Equatable {
     String? assigneeId,
     DateTime? createdAt,
     String? description,
-    Duration? duration,
+    TaskDuration? duration,
     String? parentId,
   }) {
     return Task(
@@ -171,7 +171,7 @@ class Task extends Equatable {
     assigneeId: '',
     createdAt: DateTime.now(),
     description: '',
-    duration: Duration.empty,
+    duration: TaskDuration.empty,
     parentId: '',
   );
 }
@@ -235,8 +235,8 @@ class Due extends Equatable {
   );
 }
 
-class Duration extends Equatable {
-  const Duration({
+class TaskDuration extends Equatable {
+  const TaskDuration({
     required this.amount,
     required this.unit,
   });
@@ -246,7 +246,7 @@ class Duration extends Equatable {
 
   List<Object> get props => [amount, unit];
 
-  factory Duration.fromJson(Map<String, dynamic> json) => Duration(
+  factory TaskDuration.fromJson(Map<String, dynamic> json) => TaskDuration(
         amount: json['amount'] ?? 0,
         unit: json['unit'] ?? '',
       );
@@ -256,11 +256,11 @@ class Duration extends Equatable {
         'unit': unit,
       };
 
-  Duration copyWith({
+  TaskDuration copyWith({
     int? amount,
     String? unit,
   }) {
-    return Duration(
+    return TaskDuration(
       amount: amount ?? this.amount,
       unit: unit ?? this.unit,
     );
@@ -274,7 +274,7 @@ class Duration extends Equatable {
   @override
   bool get stringify => true;
 
-  static const empty = Duration(amount: 0, unit: '');
+  static const empty = TaskDuration(amount: 0, unit: '');
 }
 
 class TaskResponse extends Equatable {
@@ -294,6 +294,28 @@ class TaskResponse extends Equatable {
 
   @override
   String toString() => 'TaskResponse(tasks: $tasks)';
+
+  @override
+  bool get stringify => true;
+}
+
+class SingleTaskResponse extends Equatable {
+  const SingleTaskResponse({
+    required this.task,
+  });
+
+  final Task task;
+
+  List<Object> get props => [task];
+
+  factory SingleTaskResponse.fromJson(Map<String, dynamic> json) {
+    return SingleTaskResponse(
+      task: Task.fromJson(json),
+    );
+  }
+
+  @override
+  String toString() => 'SingleTaskResponse(task: $task)';
 
   @override
   bool get stringify => true;

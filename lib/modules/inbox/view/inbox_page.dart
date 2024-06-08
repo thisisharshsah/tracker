@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoist/todoist.dart';
 
+import '../../task/task.dart';
 import '../inbox.dart';
-import 'inbox_view.dart';
 
 class InboxPage extends StatelessWidget {
   const InboxPage({super.key});
@@ -21,8 +22,12 @@ class InboxPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => InboxBloc(),
-      child: const InboxView(),
+      create: (context) => InboxBloc(Todoist())..add(const InboxInitial()),
+      child: BlocBuilder<InboxBloc, InboxState>(
+        builder: (context, state) {
+          return TaskPage(project: state.inbox);
+        },
+      ),
     );
   }
 }

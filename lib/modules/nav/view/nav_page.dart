@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todoist/todoist.dart';
 
 import '../nav.dart';
 import 'nav_view.dart';
@@ -21,7 +20,7 @@ class NavPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NavBloc(todoist: Todoist()),
+      create: (context) => NavBloc(),
       child: const NavView(),
     );
   }

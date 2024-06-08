@@ -8,16 +8,23 @@ abstract class TaskEvent extends Equatable {
 }
 
 class TaskInitial extends TaskEvent {
-  const TaskInitial(this.project);
-
-  final Project project;
+  const TaskInitial();
 
   @override
-  List<Object> get props => [project];
+  List<Object> get props => [];
 }
 
-class TaskSelected extends TaskEvent {
-  const TaskSelected(this.task);
+class TaskClosed extends TaskEvent {
+  const TaskClosed(this.task);
+
+  final Task task;
+
+  @override
+  List<Object> get props => [task];
+}
+
+class TaskEdit extends TaskEvent {
+  const TaskEdit(this.task);
 
   final Task task;
 
@@ -61,24 +68,44 @@ class TaskDescriptionChanged extends TaskEvent {
   List<Object> get props => [description];
 }
 
-class TaskCreated extends TaskEvent {
-  const TaskCreated({
-    required this.content,
-    required this.description,
-    required this.due,
-    required this.priority,
-    required this.projectId,
-  });
+class FetchDuration extends TaskEvent {
+  const FetchDuration(this.task);
 
-  final String content;
-  final String description;
-  final DateTime due;
-  final int priority;
-  final String projectId;
+  final Task task;
+
+  @override
+  List<Object> get props => [task];
+}
+
+class TaskResumed extends TaskEvent {
+  const TaskResumed(this.task);
+
+  final Task task;
+
+  @override
+  List<Object> get props => [task];
+}
+
+class TaskPaused extends TaskEvent {
+  const TaskPaused(this.task);
+
+  final Task task;
+
+  @override
+  List<Object> get props => [task];
+}
+
+class TaskCreated extends TaskEvent {
+  const TaskCreated();
+
+  @override
+  List<Object> get props => [];
 }
 
 class TaskUpdated extends TaskEvent {
-  const TaskUpdated(this.task);
+  const TaskUpdated(
+    this.task,
+  );
 
   final Task task;
 

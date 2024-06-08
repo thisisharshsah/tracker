@@ -1,5 +1,7 @@
 part of 'task_bloc.dart';
 
+enum TaskAction { add, update, view }
+
 class TaskState extends Equatable {
   final List<Task> tasks;
   final bool isLoading;
@@ -8,15 +10,23 @@ class TaskState extends Equatable {
   final int priority;
   final String dueDate;
   final String description;
+  final Project project;
+  final int duration;
+  final TaskAction action;
+  final bool isTaskRunning;
 
   const TaskState({
     this.tasks = const [],
-    this.isLoading = false,
+    this.isLoading = true,
     this.selectedTask,
     this.content = '',
     this.priority = 1,
     this.dueDate = '',
     this.description = '',
+    this.duration = 0,
+    this.project = Project.empty,
+    this.action = TaskAction.view,
+    this.isTaskRunning = false,
   });
 
   @override
@@ -28,6 +38,10 @@ class TaskState extends Equatable {
         priority,
         dueDate,
         description,
+        duration,
+        project,
+        action,
+        isTaskRunning,
       ];
 
   TaskState copyWith({
@@ -38,7 +52,10 @@ class TaskState extends Equatable {
     int? priority,
     String? dueDate,
     String? description,
+    int? duration,
     Project? project,
+    TaskAction? action,
+    bool? isTaskRunning,
   }) {
     return TaskState(
       tasks: tasks ?? this.tasks,
@@ -48,6 +65,10 @@ class TaskState extends Equatable {
       priority: priority ?? this.priority,
       dueDate: dueDate ?? this.dueDate,
       description: description ?? this.description,
+      duration: duration ?? this.duration,
+      project: project ?? this.project,
+      action: action ?? this.action,
+      isTaskRunning: isTaskRunning ?? this.isTaskRunning,
     );
   }
 

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +16,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         super(const ProjectState()) {
     on<ProjectInitial>(_onProjectInitial);
     on<ProjectSelected>(_onProjectSelected);
+    on<ProjectNameChanged>(_onProjectNameChanged);
+    on<ProjectCreated>(_onProjectCreated);
   }
 
   final Todoist _todoist;
@@ -28,8 +28,10 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   ) async {
     emit(state.copyWith(isLoading: true));
     await _todoist.getProjects().then((response) {
-      emit(state.copyWith(projects: response.projects));
-      print(jsonEncode(response.projects));
+      emit(state.copyWith(
+          projects: response.projects.where((element) {
+        return element.order != 0;
+      }).toList()));
     }).whenComplete(() {
       emit(state.copyWith(isLoading: false));
     });
@@ -41,5 +43,22 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       Routes.task,
       arguments: state.selectedProject,
     );
+  }
+
+  void _onProjectNameChanged(
+      ProjectNameChanged event, Emitter<ProjectState> emit) {
+    emit(state.copyWith(projectName: event.name));
+  }
+
+  void _onProjectCreated(
+      ProjectCreated event, Emitter<ProjectState> emit) async {
+    await _todoist.createProject(name: state.projectName).then((response) {
+      Navigator.of(RootNavigatorKey.key.currentContext!).pop();
+      SnackBarService.showSnackBar(content: 'Project created');
+    }).catchError((error) {
+      ResponseHandler.handleResponse(response: error);
+    }).whenComplete(() {
+      add(const ProjectInitial());
+    });
   }
 }

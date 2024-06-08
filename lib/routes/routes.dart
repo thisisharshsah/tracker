@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todoist/todoist.dart';
-import '../modules/history/history.dart';
 import '../modules/home/home.dart';
 import '../modules/inbox/inbox.dart';
 import '../modules/nav/nav.dart';
@@ -35,8 +34,6 @@ class RouteGenerator {
         return TaskPage.route(project: settings.arguments as Project);
       case Routes.inbox:
         return InboxPage.route();
-      case Routes.history:
-        return HistoryPage.route();
       default:
         return NotFoundPage.route();
     }

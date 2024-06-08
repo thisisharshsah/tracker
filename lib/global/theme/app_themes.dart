@@ -5,7 +5,7 @@ enum AppTheme { light, dark }
 final appThemeData = {
   AppTheme.light: ThemeData(
     primaryColor: white,
-    scaffoldBackgroundColor: white,
+    scaffoldBackgroundColor: background,
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     colorScheme: const ColorScheme.light(

@@ -19,18 +19,3 @@ class NavUpdate extends NavEvent {
 class NavReset extends NavEvent {
   const NavReset() : super._();
 }
-
-class ProjectNameChanged extends NavEvent {
-  const ProjectNameChanged({
-    required this.name,
-  }) : super._();
-
-  final String name;
-
-  @override
-  List<Object> get props => [name];
-}
-
-class NavAdd extends NavEvent {
-  const NavAdd() : super._();
-}
