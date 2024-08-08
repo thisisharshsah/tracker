@@ -74,11 +74,11 @@ class ProgressItem extends StatelessWidget {
       builder: (context, candidateData, rejectedData) {
         return _buildProgressItem(context);
       },
-      onWillAccept: (data) {
+      onWillAcceptWithDetails: (data) {
         return true;
       },
-      onAccept: (data) {
-        print('$title accepted');
+      onAcceptWithDetails: (data) {
+        debugPrint('$title accepted');
       },
     );
   }
